@@ -15,6 +15,13 @@ app.get('/users', (req, res) => {
 app.get('/users/:userId', (req, res) => {
     const {userId} = req.params;
 
+    if (isNaN(userId)) {
+        res.status(400).json({msg: `The request cannot be fulfilled due to bad syntax.`});
+    } else if (userId !== userDb[userId]) {
+        res.status(404).json({msg: `The user with index is not: ${userId} found`});
+
+    }
+
     res.json(userDb[userId]);
 });
 app.post('/users', (req, res) => {
@@ -33,7 +40,7 @@ app.put('users/:userId', (req, res) => {
     const newUserInfo = req.body;
     const userId = req.params.userId;
 
-    if (!isNaN(userId)) {
+    if (isNaN(userId)) {
         res.status(400).json({msg: `The request cannot be fulfilled due to bad syntax.`});
     }
 
@@ -50,7 +57,7 @@ app.put('users/:userId', (req, res) => {
 
 app.delete('/users/:userId', (req, res) => {
     const {userId} = req.params;
-    if (!isNaN(userId)) {
+    if (isNaN(userId)) {
         res.status(400).json({msg: `The request cannot be fulfilled due to bad syntax.`});
     }
     if (!userDb[userId]) {
