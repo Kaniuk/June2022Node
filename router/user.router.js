@@ -9,25 +9,26 @@ router.get('/',
 );
 
 router.post('/',
+    mdlwr.checkIsEmailExist,
+    mdlwr.userNormalizator,
     mdlwr.isBodyValidCreate,
     controller.createUser
 );
 
+
 router.get('/:userId',
-    mdlwr.isIdValid,
     mdlwr.checkIsUserExist,
     controller.getUserById
 );
 
 router.put('/:userId',
-    mdlwr.isIdValid,
     mdlwr.isBodyValidUpdate,
+    mdlwr.userNormalizator,
     mdlwr.checkIsUserExist,
     controller.updateUser
 );
 
 router.delete('/:userId',
-    mdlwr.isIdValid,
     mdlwr.checkIsUserExist,
     controller.deleteUser
 );

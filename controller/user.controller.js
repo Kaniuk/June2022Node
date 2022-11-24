@@ -1,10 +1,10 @@
-const {fileServices} = require("../services");
+const {userService} = require("../service");
 
 
 module.exports = {
     getAllUsers: async (req, res, next) => {
         try {
-            const users = await fileServices.reader();
+            const users = await userService.findByParams();
 
             res.json(users);
         } catch (e) {
@@ -15,19 +15,9 @@ module.exports = {
     createUser: async (req, res, next) => {
         try {
             const userInfo = req.body;
+            await userService.create(userInfo);
 
-            const users = await fileServices.reader();
-
-            const newUser = {
-                name: userInfo.name,
-                age: userInfo.age,
-                id: users[users.length - 1].id + 1
-            };
-            users.push(newUser);
-
-            await fileServices.writer(users);
-
-            res.status(201).json(newUser);
+            res.status(201).json('Created');
         } catch (e) {
             next(e);
         }
@@ -36,13 +26,11 @@ module.exports = {
     updateUser: async (req, res, next) => {
         try {
             const {user, users, body} = req;
+            const newUserInfo = body;
+            const userId = req.params.userId;
+          const updatedUser =  await userService.updateOne(userId, newUserInfo);
 
-            const index = users.findIndex((u) => u.id === user.id);
-            users[index] = {...users[index], ...body};
-
-            await fileServices.writer(users);
-
-            res.status(201).json(users[index]);
+            res.status(201).json(updatedUser);
         } catch (e) {
             next(e);
         }
@@ -55,14 +43,10 @@ module.exports = {
             next(e);
         }
     },
+
     deleteUser: async (req, res, next) => {
         try {
-            const {user, users} = req;
-
-            const index = users.findIndex((u) => u.id === user.id);
-            users.splice(index, 1);
-
-            await fileServices.writer(users);
+            await userService.deleteOne(req.params.userId);
 
             res.sendStatus(204);
         } catch (e) {
