@@ -9,27 +9,32 @@ router.get('/',
 );
 
 router.post('/',
+    mdlwr.isNewUserValid,
     mdlwr.checkIsEmailExist,
-    mdlwr.userNormalizator,
+    // mdlwr.userNormalizator,
     mdlwr.isBodyValidCreate,
     controller.createUser
 );
 
 
 router.get('/:userId',
-    mdlwr.checkIsUserExist,
+    mdlwr.isUserIdValid,
+    mdlwr.getUserDynamically('userId','params','_id'),
     controller.getUserById
 );
 
 router.put('/:userId',
+    mdlwr.isNewUserValid,
+    mdlwr.isEditableUserValid,
     mdlwr.isBodyValidUpdate,
-    mdlwr.userNormalizator,
-    mdlwr.checkIsUserExist,
+    // mdlwr.userNormalizator,
+    mdlwr.getUserDynamically('userId','params','_id'),
     controller.updateUser
 );
 
 router.delete('/:userId',
-    mdlwr.checkIsUserExist,
+    mdlwr.isUserIdValid,
+    // mdlwr.checkIsUserExist,
     controller.deleteUser
 );
 

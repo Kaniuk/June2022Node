@@ -1,4 +1,4 @@
-const {userService} = require("../service");
+const {userService, oauthService} = require("../service");
 
 
 module.exports = {
@@ -7,6 +7,7 @@ module.exports = {
             const users = await userService.findByParams();
 
             res.json(users);
+
         } catch (e) {
             next(e);
         }
@@ -14,10 +15,13 @@ module.exports = {
 
     createUser: async (req, res, next) => {
         try {
-            const userInfo = req.body;
-            await userService.create(userInfo);
+
+            const hashPassword = await oauthService.hashPassword(req.body.password);
+
+            await userService.create({...req.body, password: hashPassword});
 
             res.status(201).json('Created');
+
         } catch (e) {
             next(e);
         }
@@ -28,7 +32,7 @@ module.exports = {
             const {user, users, body} = req;
             const newUserInfo = body;
             const userId = req.params.userId;
-          const updatedUser =  await userService.updateOne(userId, newUserInfo);
+            const updatedUser = await userService.updateOne(userId, newUserInfo);
 
             res.status(201).json(updatedUser);
         } catch (e) {
