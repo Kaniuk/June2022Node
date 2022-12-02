@@ -2,6 +2,7 @@ const router = require('express').Router();
 
 const controller = require("../controller/user.controller");
 const mdlwr = require("../middleware/user.middleware");
+const authMdlwr = require("../middleware/auth.middleware");
 
 
 router.get('/',
@@ -19,22 +20,23 @@ router.post('/',
 
 router.get('/:userId',
     mdlwr.isUserIdValid,
-    mdlwr.getUserDynamically('userId','params','_id'),
+    authMdlwr.checkAccessToken,
+    mdlwr.getUserDynamically('userId', 'params', '_id'),
     controller.getUserById
 );
 
 router.put('/:userId',
     mdlwr.isNewUserValid,
+    authMdlwr.checkAccessToken,
     mdlwr.isEditableUserValid,
     mdlwr.isBodyValidUpdate,
-    // mdlwr.userNormalizator,
-    mdlwr.getUserDynamically('userId','params','_id'),
+    mdlwr.getUserDynamically('userId', 'params', '_id'),
     controller.updateUser
 );
 
 router.delete('/:userId',
     mdlwr.isUserIdValid,
-    // mdlwr.checkIsUserExist,
+    authMdlwr.checkAccessToken,
     controller.deleteUser
 );
 

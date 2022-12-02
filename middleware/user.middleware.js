@@ -1,4 +1,3 @@
-// const ApiError = require('../error/ApiError');
 const {userService} = require("../service");
 const {userNormalizator} = require("../helper");
 const userValidator = require('../validators/user.validator');

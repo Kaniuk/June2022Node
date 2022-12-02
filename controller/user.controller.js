@@ -42,7 +42,9 @@ module.exports = {
 
     getUserById: async (req, res, next) => {
         try {
-            res.json(req.user);
+            const user = await userService.findByIdWithCars(req.user._id);
+
+            res.json(user);
         } catch (e) {
             next(e);
         }
