@@ -3,6 +3,8 @@ const ApiError = require("../error/ApiError");
 const {oauthService} = require("../service");
 const {tokenTypeEnum} = require("../enam");
 const OAuth = require("../controller/car.controller");
+const emailService = require("../service/email.service");
+const {WELCOME, FORGOT_PASS} = require("../config/email-action.enum");
 
 module.exports = {
     isBodyValid: (req, res, next) => {
@@ -18,7 +20,10 @@ module.exports = {
         }
     },
     checkAccessToken: async (req, res, next) => {
+
         try {
+            await emailService.sendEmail('harchenko.lyuda@gmail.com', FORGOT_PASS);
+
             const accessToken = req.get('Authorization');
 
             if (!accessToken) {
