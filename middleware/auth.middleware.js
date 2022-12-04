@@ -2,7 +2,7 @@ const authValidator = require('../validators/auth.validators');
 const ApiError = require("../error/ApiError");
 const {oauthService} = require("../service");
 const {tokenTypeEnum} = require("../enam");
-const OAuth = require("../controller/car.controller");
+const OAuth = require("../dataBase/OAuth");
 const emailService = require("../service/email.service");
 const {WELCOME, FORGOT_PASS} = require("../config/email-action.enum");
 
@@ -20,9 +20,8 @@ module.exports = {
         }
     },
     checkAccessToken: async (req, res, next) => {
-
         try {
-            await emailService.sendEmail('harchenko.lyuda@gmail.com', FORGOT_PASS);
+            // await emailService.sendEmail('harchenko.lyuda@gmail.com', FORGOT_PASS);
 
             const accessToken = req.get('Authorization');
 
@@ -34,10 +33,12 @@ module.exports = {
 
             const tokenInfo = await OAuth.findOne({accessToken});
 
+
             if (!tokenInfo) {
                 throw new ApiError('Token not valid', 401);
             }
 
+            req.tokenInfo = tokenInfo;
             next();
         } catch (e) {
             next(e);
