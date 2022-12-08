@@ -1,4 +1,4 @@
 module.exports = {
-    WELCOME:'welcome',
+    WELCOME:'welcome.hbs',
     FORGOT_PASS:'forgot_pass'
 }

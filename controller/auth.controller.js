@@ -14,7 +14,7 @@ module.exports = {
         try {
             const {user, body} = req;
 
-            // await emailService.sendEmail('harchenko.lyuda@gmail.com', WELCOME);
+            await emailService.sendEmail(user.email, WELCOME, {userName: user.name});
 
             await oauthService.comparePasswords(user.password, body.password);
 
@@ -78,7 +78,7 @@ module.exports = {
             const forgotPassFEUrl = `${FRONTEND_URL}/password/new?token=${actionToken}`;
 
             await ActionToken.create({token: actionToken, tokenType: FORGOT_PASSWORD, _user_id: user._id});
-            await emailService.sendEmail('harchenko.lyuda@gmail.com', FORGOT_PASS, {url: forgotPassFEUrl});
+            await emailService.sendEmail(user.email, FORGOT_PASS, {url: forgotPassFEUrl, userName: user.name});
 
             res.json('ok');
         } catch (e) {
