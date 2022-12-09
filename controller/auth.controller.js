@@ -1,6 +1,7 @@
 const oauthService = require('../service/auth.service');
 const emailService = require('../service/email.service');
 const OAuth = require('../dataBase/OAuth');
+const OldPassword = require('../dataBase/OldPassword');
 const {WELCOME} = require("../config/email-action.enum");
 const User = require("../service/user.service");
 const ActionToken = require("../dataBase/ActionToken");
@@ -88,7 +89,12 @@ module.exports = {
     },
     forgotPasswordAfterForgot: async (req, res, next) => {
         try {
-            const hashPassword = await oauthService.hashPassword(req.body.password);
+
+            const {user, body} = req;
+
+            const hashPassword = await oauthService.hashPassword(body.password);
+
+            await OldPassword.create({ _user_id: user._id, password: user.password});
 
             await ActionToken.deleteOne({token: req.get('Authorization')});
             await User.updateOne({_id: req.user._id}, {password: hashPassword});

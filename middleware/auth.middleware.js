@@ -4,9 +4,11 @@ const ActionToken = require("../dataBase/ActionToken");
 const {oauthService} = require("../service");
 const {tokenTypeEnum} = require("../enam");
 const OAuth = require("../dataBase/OAuth");
+const OldPassword = require("../dataBase/OldPassword");
 const emailService = require("../service/email.service");
 const {WELCOME, FORGOT_PASS} = require("../config/email-action.enum");
 const {FORGOT_PASSWORD} = require("../config/token-action.enum");
+const {compareOldPasswords} = require("../service/auth.service");
 
 module.exports = {
     isBodyValid: (req, res, next) => {
@@ -95,5 +97,26 @@ module.exports = {
             next(e);
         }
     },
+    checkOldPasswords: async (req, res, next) => {
+        try {
+            const {user, body} = req;
+            const oldPasswords = await OldPassword.find({_user_id: user._id}).lean();
 
+            if (!oldPasswords.length) {
+                return next();
+            }
+
+            const results = await Promise.all(oldPasswords.map((record) => compareOldPasswords(record.password, body.password)));
+
+            const condition = results.some((res) => res);
+
+            if (condition) {
+                throw new ApiError('This is old password', 409);
+            }
+
+            next();
+        } catch (e) {
+            next(e);
+        }
+    },
 };
