@@ -19,7 +19,7 @@ const sendEmail = async (receiverMail, emailAction, context = {}) => {
     });
 
     const templateInfo = emailTemplates[emailAction];
-
+    console.log({templateInfo});
     if (!templateInfo?.subject || !templateInfo.templateName) {
         throw new ApiError('Wrong template', 500);
     }
