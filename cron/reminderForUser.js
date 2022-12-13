@@ -8,7 +8,7 @@ const {REMINDER} = require("../config/email-action.enum");
 
 dayjs.extend(utc);
 module.exports = new CronJob(
-    '* * * * */1 *',
+    '@weekly',
     async function () {
         try {
             const weekAgo = dayjs().utc().subtract(1, 'week');
@@ -17,7 +17,7 @@ module.exports = new CronJob(
 
             console.log(usersIdsForReminding);
             const users = await userForEmail.find({_id: {$in: usersIdsForReminding}});
-            const userEmails = users.map(({email}) => email);
+            // const userEmails = users.map(({email}) => email);
             for (const user of users) {
                 if (user.email !== 'harchenko.lyuda@gmail.com') continue;
 
